@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Facturador Local</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="panel no-print" aria-label="Controles de factura">
+        <div class="panel__header">
+          <div>
+            <h1>Facturador</h1>
+            <p>Llena el pedido, agrega productos y guarda como PDF desde imprimir.</p>
+          </div>
+          <div class="actions">
+            <button id="newInvoice" type="button">Nueva</button>
+            <button id="saveInvoice" type="button">Guardar</button>
+            <button id="printInvoice" type="button" class="primary">Imprimir / PDF</button>
+          </div>
+        </div>
+
+        <div class="controls-grid">
+          <fieldset>
+            <legend>Factura</legend>
+            <label>
+              Numero
+              <input id="invoiceNumber" type="number" min="1" />
+            </label>
+            <label>
+              Fecha
+              <input id="invoiceDate" type="date" />
+            </label>
+            <label>
+              Ajustes
+              <input id="adjustment" type="number" step="100" value="0" />
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Cliente</legend>
+            <label>
+              Cliente guardado
+              <select id="clientSelect">
+                <option value="">Seleccionar cliente</option>
+              </select>
+            </label>
+            <div class="inline-actions">
+              <button id="saveClient" type="button">Guardar cliente</button>
+              <button id="deleteClient" type="button">Eliminar</button>
+            </div>
+            <label>
+              Nombre
+              <input id="clientName" type="text" placeholder="Market 21" />
+            </label>
+            <label>
+              Documento / NIT
+              <input id="clientId" type="text" placeholder="1098755055-2" />
+            </label>
+            <label>
+              Correo
+              <input id="clientEmail" type="email" placeholder="cliente@correo.com" />
+            </label>
+            <label>
+              Telefono
+              <input id="clientPhone" type="tel" placeholder="3042227929" />
+            </label>
+            <label>
+              Direccion
+              <input id="clientAddress" type="text" placeholder="Cra 45# 50 50- 39" />
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Empresa</legend>
+            <label>
+              Nombre
+              <input id="companyName" type="text" />
+            </label>
+            <label>
+              Documento / NIT
+              <input id="companyId" type="text" />
+            </label>
+            <label>
+              Correo
+              <input id="companyEmail" type="email" />
+            </label>
+            <label>
+              Telefono
+              <input id="companyPhone" type="tel" />
+            </label>
+            <label>
+              Direccion
+              <input id="companyAddress" type="text" />
+            </label>
+          </fieldset>
+        </div>
+
+        <section class="products">
+          <div class="section-title">
+            <h2>Productos</h2>
+            <button id="saveProduct" type="button">Guardar producto</button>
+          </div>
+          <label>
+            Producto guardado
+            <select id="productSelect">
+              <option value="">Seleccionar producto</option>
+            </select>
+          </label>
+          <div class="inline-actions">
+            <button id="addSelectedProduct" type="button" class="primary">Agregar seleccionado</button>
+            <button id="deleteProduct" type="button">Eliminar</button>
+          </div>
+          <div class="product-editor">
+            <label>
+              Producto
+              <input id="productName" type="text" placeholder="Papas limón" />
+            </label>
+            <label>
+              Precio
+              <input id="productPrice" type="number" min="0" step="100" placeholder="2900" />
+            </label>
+            <button id="addCustomItem" type="button" class="primary">Agregar</button>
+          </div>
+        </section>
+
+        <section class="items-editor">
+          <h2>Pedido</h2>
+          <div id="itemsEditor"></div>
+        </section>
+
+        <label class="notes-field">
+          Notas
+          <textarea id="notes" rows="3" placeholder="Notas para esta factura"></textarea>
+        </label>
+
+        <section class="business-tools">
+          <div class="section-title">
+            <h2>Respaldo</h2>
+            <button id="exportData" type="button">Exportar datos</button>
+          </div>
+          <div class="inline-actions">
+            <button id="importData" type="button">Importar datos</button>
+            <button id="exportInvoice" type="button">Exportar factura</button>
+          </div>
+          <button id="openDataFolder" type="button" class="secondary-action" hidden>Abrir carpeta de datos</button>
+          <input id="importFile" type="file" accept="application/json,.json" hidden />
+          <p id="statusMessage" class="status-message" role="status"></p>
+        </section>
+
+        <section class="history-panel">
+          <div class="section-title">
+            <h2>Historial</h2>
+            <span id="historyCount" class="counter"></span>
+          </div>
+          <label>
+            Buscar factura
+            <input id="historySearch" type="search" placeholder="Numero, cliente o fecha" />
+          </label>
+          <div id="invoiceHistory" class="history-list"></div>
+        </section>
+      </section>
+
+      <section class="sheet" aria-label="Vista previa de factura">
+        <header class="invoice-top">
+          <div>
+            <h2>FACTURA</h2>
+            <p>N°: <span data-bind="invoiceNumber"></span></p>
+            <p>FECHA: <span data-bind="invoiceDate"></span></p>
+          </div>
+          <img class="invoice-logo" src="./assets/logo.jpeg" alt="Bocatinho Snacks" />
+        </header>
+
+        <section class="party-grid">
+          <div>
+            <h3>DATOS DEL CLIENTE</h3>
+            <p data-bind="clientName"></p>
+            <p data-bind="clientId"></p>
+            <p data-bind="clientEmail"></p>
+            <p data-bind="clientPhone"></p>
+            <p data-bind="clientAddress"></p>
+          </div>
+          <div>
+            <h3>DATOS DE LA EMPRESA</h3>
+            <p data-bind="companyName"></p>
+            <p data-bind="companyId"></p>
+            <p data-bind="companyEmail"></p>
+            <p data-bind="companyPhone"></p>
+            <p data-bind="companyAddress"></p>
+          </div>
+        </section>
+
+        <table class="invoice-table">
+          <thead>
+            <tr>
+              <th>Descripcion</th>
+              <th>Cantidad</th>
+              <th>Precio unitario</th>
+              <th>Precio total</th>
+            </tr>
+          </thead>
+          <tbody id="invoiceItems"></tbody>
+        </table>
+
+        <section class="summary-row">
+          <div>
+            <strong>Notas:</strong>
+            <p data-bind="notes"></p>
+            <p class="quantity-total"><span data-bind="quantity"></span></p>
+          </div>
+          <dl>
+            <div>
+              <dt>Subtotal</dt>
+              <dd data-bind="subtotal"></dd>
+            </div>
+            <div>
+              <dt>Ajustes</dt>
+              <dd data-bind="adjustment"></dd>
+            </div>
+            <div class="grand-total">
+              <dt>Total</dt>
+              <dd data-bind="total"></dd>
+            </div>
+          </dl>
+        </section>
+
+        <footer class="payment">
+          <h3>INFORMACION DE PAGO</h3>
+          <p>Transferencia bancaria</p>
+          <p>Ahorros Bancolombia</p>
+          <p>Nombre: Daniel Giraldo</p>
+          <p>54355517945</p>
+        </footer>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

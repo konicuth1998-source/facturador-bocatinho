@@ -34,6 +34,15 @@ Los instaladores quedan en `dist/`.
 
 ## Publicar una nueva version
 
+Primera publicacion:
+
+```bash
+gh auth login
+./scripts/publicar-primera-vez.sh v1.0.0
+```
+
+Ese comando crea el repo remoto `konicuth1998-source/facturador-bocatinho`, sube el codigo y dispara el primer release.
+
 1. Actualiza la version en `package.json`, por ejemplo `1.0.1`.
 2. Haz commit de los cambios.
 3. Crea y sube un tag:

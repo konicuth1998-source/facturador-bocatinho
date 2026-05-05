@@ -159,6 +159,7 @@ textarea {
 .items-editor,
 .notes-field,
 .business-tools,
+.reports-panel,
 .history-panel {
   display: block;
   margin-top: 16px;
@@ -215,9 +216,63 @@ textarea {
   min-height: 18px;
 }
 
+.field-warning {
+  color: #a23b16;
+  font-size: 12px;
+  min-height: 16px;
+  margin: -4px 0 8px;
+}
+
 .counter {
   color: var(--muted);
   font-size: 13px;
+}
+
+.report-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.report-cards article {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #f8faf8;
+}
+
+.report-cards span,
+.report-list h3 {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.report-cards strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 16px;
+}
+
+.report-list {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.report-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+.report-row span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .history-list {
@@ -468,6 +523,7 @@ dd {
 
   .product-editor,
   .item-line,
+  .report-cards,
   .panel__header {
     grid-template-columns: 1fr;
     display: grid;

@@ -426,6 +426,18 @@ function totals() {
   };
 }
 
+function findInvoiceWithSameNumber(number, ignoredId = "") {
+  const normalizedNumber = parseNumber(number);
+  if (!normalizedNumber) return null;
+  return state.invoices.find((invoice) => parseNumber(invoice.number) === normalizedNumber && invoice.id !== ignoredId) || null;
+}
+
+function invoiceNumberWarning() {
+  const duplicate = findInvoiceWithSameNumber(state.invoiceNumber, state.currentInvoiceId);
+  if (!duplicate) return "";
+  return `Ese numero ya existe para ${duplicate.clientName || "otra factura"} (${formatDate(duplicate.date)}).`;
+}
+
 function currentInvoiceSnapshot() {
   const calculated = totals();
   const now = new Date().toISOString();
@@ -457,6 +469,13 @@ function currentInvoiceSnapshot() {
 
 function saveCurrentInvoice(showMessage = true) {
   const invoice = currentInvoiceSnapshot();
+  const duplicate = findInvoiceWithSameNumber(invoice.number, invoice.id);
+  if (duplicate) {
+    setStatus(`No se guardo: la factura ${invoice.number} ya existe.`);
+    renderNumberWarning();
+    return null;
+  }
+
   const index = state.invoices.findIndex((item) => item.id === invoice.id);
   if (index >= 0) {
     state.invoices[index] = invoice;
@@ -701,6 +720,81 @@ function renderHistory() {
   });
 }
 
+function buildReports() {
+  const invoices = state.invoices;
+  const productTotals = new Map();
+  const clientTotals = new Map();
+
+  invoices.forEach((invoice) => {
+    const client = invoice.clientName || "Sin cliente";
+    const clientStats = clientTotals.get(client) || { name: client, total: 0, invoices: 0 };
+    clientStats.total += parseNumber(invoice.total);
+    clientStats.invoices += 1;
+    clientTotals.set(client, clientStats);
+
+    (invoice.items || []).forEach((item) => {
+      const name = item.name || "Producto sin nombre";
+      const stats = productTotals.get(name) || { name, quantity: 0, total: 0 };
+      stats.quantity += parseNumber(item.quantity);
+      stats.total += parseNumber(item.quantity) * parseNumber(item.price);
+      productTotals.set(name, stats);
+    });
+  });
+
+  return {
+    totalSales: invoices.reduce((sum, invoice) => sum + parseNumber(invoice.total), 0),
+    invoiceCount: invoices.length,
+    unitCount: invoices.reduce(
+      (sum, invoice) => sum + (invoice.items || []).reduce((itemSum, item) => itemSum + parseNumber(item.quantity), 0),
+      0,
+    ),
+    topProducts: [...productTotals.values()].sort((a, b) => b.quantity - a.quantity || b.total - a.total).slice(0, 5),
+    topClients: [...clientTotals.values()].sort((a, b) => b.total - a.total || b.invoices - a.invoices).slice(0, 5),
+  };
+}
+
+function renderReportRows(containerId, rows, emptyText, formatter) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  if (!rows.length) {
+    const empty = document.createElement("p");
+    empty.textContent = emptyText;
+    container.append(empty);
+    return;
+  }
+
+  rows.forEach((row) => {
+    const item = document.createElement("div");
+    item.className = "report-row";
+    item.innerHTML = `
+      <span>${escapeHtml(row.name)}</span>
+      <strong>${escapeHtml(formatter(row))}</strong>
+    `;
+    container.append(item);
+  });
+}
+
+function renderReports() {
+  const report = buildReports();
+  document.getElementById("reportRange").textContent = "Historico completo";
+  document.getElementById("reportSales").textContent = money.format(report.totalSales);
+  document.getElementById("reportInvoices").textContent = report.invoiceCount;
+  document.getElementById("reportUnits").textContent = report.unitCount;
+  renderReportRows(
+    "topProducts",
+    report.topProducts,
+    "Guarda facturas para ver productos.",
+    (item) => `${item.quantity} und · ${money.format(item.total)}`,
+  );
+  renderReportRows(
+    "topClients",
+    report.topClients,
+    "Guarda facturas para ver clientes.",
+    (item) => `${money.format(item.total)} · ${item.invoices}`,
+  );
+}
+
 function renderItemsEditor() {
   const container = document.getElementById("itemsEditor");
   container.innerHTML = "";
@@ -775,6 +869,11 @@ function renderBindings() {
   });
 }
 
+function renderNumberWarning() {
+  const warning = document.getElementById("numberWarning");
+  warning.textContent = invoiceNumberWarning();
+}
+
 function render() {
   renderClients();
   renderProducts();
@@ -782,6 +881,8 @@ function render() {
   renderInvoiceItems();
   renderBindings();
   renderHistory();
+  renderReports();
+  renderNumberWarning();
   syncInputs();
 }
 
@@ -810,6 +911,7 @@ function exportAllData() {
 
 function exportCurrentInvoice() {
   const invoice = saveCurrentInvoice(false);
+  if (!invoice) return;
   const client = safeFileName(invoice.clientName || "sin-cliente");
   downloadJson(
     {
@@ -952,6 +1054,7 @@ document.getElementById("saveInvoice").addEventListener("click", () => {
 
 document.getElementById("printInvoice").addEventListener("click", () => {
   const invoice = saveCurrentInvoice(false);
+  if (!invoice) return;
   const client = safeFileName(invoice.clientName || "sin-cliente");
   document.title = `Factura-${invoice.number}-${client}`;
   window.print();
@@ -970,9 +1073,19 @@ document.getElementById("importFile").addEventListener("change", (event) => {
 
 if (desktopApi) {
   const openDataFolder = document.getElementById("openDataFolder");
+  const openBackupFolder = document.getElementById("openBackupFolder");
+  const openReleases = document.getElementById("openReleases");
   openDataFolder.hidden = false;
+  openBackupFolder.hidden = false;
+  openReleases.hidden = false;
   openDataFolder.addEventListener("click", () => {
     desktopApi.revealData();
+  });
+  openBackupFolder.addEventListener("click", () => {
+    desktopApi.revealBackups();
+  });
+  openReleases.addEventListener("click", () => {
+    desktopApi.openReleases();
   });
 }
 

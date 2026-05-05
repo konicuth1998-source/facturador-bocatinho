@@ -4,6 +4,7 @@ const path = require("path");
 
 const appRoot = path.join(__dirname, "..");
 const dataDir = () => path.join(app.getPath("userData"), "data");
+const backupDir = () => path.join(dataDir(), "backups");
 const dataFile = () => path.join(dataDir(), "facturador-data.json");
 const appIcon = () => {
   const pngIcon = path.join(appRoot, "build", "icon.png");
@@ -14,6 +15,7 @@ app.disableHardwareAcceleration();
 
 function ensureDataDir() {
   fs.mkdirSync(dataDir(), { recursive: true });
+  fs.mkdirSync(backupDir(), { recursive: true });
 }
 
 function readData() {
@@ -35,6 +37,31 @@ function writeData(payload) {
   const tempFile = `${dataFile()}.tmp`;
   fs.writeFileSync(tempFile, JSON.stringify(payload, null, 2), "utf8");
   fs.renameSync(tempFile, dataFile());
+  writeAutomaticBackup(payload);
+}
+
+function writeAutomaticBackup(payload) {
+  const date = new Date().toISOString().slice(0, 10);
+  const backupFile = path.join(backupDir(), `respaldo-${date}.json`);
+  const backupPayload = {
+    app: "facturador-local-bocatinho",
+    type: "automatic-backup",
+    version: 3,
+    exportedAt: new Date().toISOString(),
+    state: payload,
+  };
+
+  fs.writeFileSync(backupFile, JSON.stringify(backupPayload, null, 2), "utf8");
+
+  const backups = fs
+    .readdirSync(backupDir())
+    .filter((name) => /^respaldo-\d{4}-\d{2}-\d{2}\.json$/.test(name))
+    .sort()
+    .reverse();
+
+  backups.slice(30).forEach((name) => {
+    fs.rmSync(path.join(backupDir(), name), { force: true });
+  });
 }
 
 function createWindow() {
@@ -67,6 +94,15 @@ app.whenReady().then(() => {
   ipcMain.handle("storage:reveal", () => {
     ensureDataDir();
     shell.openPath(dataDir());
+    return { ok: true };
+  });
+  ipcMain.handle("storage:reveal-backups", () => {
+    ensureDataDir();
+    shell.openPath(backupDir());
+    return { ok: true };
+  });
+  ipcMain.handle("app:open-releases", () => {
+    shell.openExternal("https://github.com/konicuth1998-source/facturador-bocatinho/releases/latest");
     return { ok: true };
   });
   ipcMain.handle("dialog:save-json", async (_event, { filename, payload }) => {

@@ -1,6 +1,6 @@
 {
   "name": "facturador-bocatinho",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Facturador de escritorio para Bocatinho Snacks",
   "main": "electron/main.js",
   "author": {

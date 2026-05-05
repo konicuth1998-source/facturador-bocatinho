@@ -11,13 +11,13 @@ App profesional instalada en este PC:
 - Carpeta de app: /opt/Facturador Bocatinho
 - Acceso de menu: /usr/share/applications/facturador-bocatinho.desktop
 - Acceso de escritorio: ~/Desktop/Facturador Bocatinho.desktop
-- Datos: ~/.config/Facturador Bocatinho/data/facturador-data.json
+- Datos: ~/.config/facturador-bocatinho/data/facturador-data.json
 
 Instaladores listos en dist:
-- Facturador Bocatinho-1.0.0-linux-amd64.deb
-- Facturador Bocatinho-1.0.0-linux-x86_64.AppImage
-- Facturador Bocatinho Setup-1.0.0-win-x64.exe
-- Facturador Bocatinho Portable-1.0.0-win-x64.exe
+- Facturador Bocatinho-1.1.0-linux-amd64.deb
+- Facturador Bocatinho-1.1.0-linux-x86_64.AppImage
+- Facturador Bocatinho Setup-1.1.0-win-x64.exe
+- Facturador Bocatinho Portable-1.1.0-win-x64.exe
 
 Respaldo:
 - Exportar datos crea un archivo JSON con clientes, productos, facturas e historial.

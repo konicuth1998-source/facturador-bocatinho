@@ -6,10 +6,10 @@ Esta carpeta contiene la version profesional instalable con Electron.
 
 Los archivos listos para copiar a otros PCs quedan en `dist/`:
 
-- `Facturador Bocatinho-1.0.0-linux-amd64.deb`: instalador para Ubuntu, Debian, Zorin y derivados.
-- `Facturador Bocatinho-1.0.0-linux-x86_64.AppImage`: version portable para Linux.
-- `Facturador Bocatinho Setup-1.0.0-win-x64.exe`: instalador para Windows con acceso de escritorio.
-- `Facturador Bocatinho Portable-1.0.0-win-x64.exe`: version portable para Windows.
+- `Facturador Bocatinho-1.1.0-linux-amd64.deb`: instalador para Ubuntu, Debian, Zorin y derivados.
+- `Facturador Bocatinho-1.1.0-linux-x86_64.AppImage`: version portable para Linux.
+- `Facturador Bocatinho Setup-1.1.0-win-x64.exe`: instalador para Windows con acceso de escritorio.
+- `Facturador Bocatinho Portable-1.1.0-win-x64.exe`: version portable para Windows.
 
 ## Desarrollo
 
@@ -41,7 +41,7 @@ npm run dist:windows
 
 La app guarda los datos en el PC donde se instala.
 
-- Linux: `~/.config/Facturador Bocatinho/data/facturador-data.json`
+- Linux: `~/.config/facturador-bocatinho/data/facturador-data.json`
 - Windows: `%APPDATA%\\Facturador Bocatinho\\data\\facturador-data.json`
 
 Dentro de la app se puede exportar e importar un respaldo JSON con clientes, productos, facturas e historial.

@@ -28,6 +28,7 @@
               Numero
               <input id="invoiceNumber" type="number" min="1" />
             </label>
+            <p id="numberWarning" class="field-warning" role="alert"></p>
             <label>
               Fecha
               <input id="invoiceDate" type="date" />
@@ -145,8 +146,39 @@
             <button id="exportInvoice" type="button">Exportar factura</button>
           </div>
           <button id="openDataFolder" type="button" class="secondary-action" hidden>Abrir carpeta de datos</button>
+          <button id="openBackupFolder" type="button" class="secondary-action" hidden>Abrir respaldos automaticos</button>
+          <button id="openReleases" type="button" class="secondary-action" hidden>Ver actualizaciones</button>
           <input id="importFile" type="file" accept="application/json,.json" hidden />
           <p id="statusMessage" class="status-message" role="status"></p>
+        </section>
+
+        <section class="reports-panel">
+          <div class="section-title">
+            <h2>Reportes</h2>
+            <span id="reportRange" class="counter"></span>
+          </div>
+          <div class="report-cards">
+            <article>
+              <span>Ventas</span>
+              <strong id="reportSales">$ 0</strong>
+            </article>
+            <article>
+              <span>Facturas</span>
+              <strong id="reportInvoices">0</strong>
+            </article>
+            <article>
+              <span>Unidades</span>
+              <strong id="reportUnits">0</strong>
+            </article>
+          </div>
+          <div class="report-list">
+            <h3>Productos mas vendidos</h3>
+            <div id="topProducts"></div>
+          </div>
+          <div class="report-list">
+            <h3>Mejores clientes</h3>
+            <div id="topClients"></div>
+          </div>
         </section>
 
         <section class="history-panel">
